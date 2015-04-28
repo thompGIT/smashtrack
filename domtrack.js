@@ -160,9 +160,9 @@ function dateToStringMini(d) {
 var showElems = []
 
 /* important play elems */
-var elem_p1,      elem_p2,      elem_p3,      elem_p4,      elem_p5,      elem_p6
-var elem_p1stats, elem_p2stats, elem_p3stats, elem_p4stats, elem_p5stats, elem_p6stats
-var score_p1,     score_p2,     score_p3,     score_p4,     score_p5,     score_p6
+var elem_p1,      elem_p2,      elem_p3,      elem_p4,      elem_p5,      elem_p6,      elem_p7,        elem_p8
+var elem_p1stats, elem_p2stats, elem_p3stats, elem_p4stats, elem_p5stats, elem_p6stats, elem_p7stats,   elem_p8stats
+var score_p1,     score_p2,     score_p3,     score_p4,     score_p5,     score_p6,     score_p7,       score_p8
 
 var playerElems   = []
 var scoreElems    = []
@@ -176,8 +176,6 @@ var playerToT      = []
 
 /* istats */
 var elem_istatsPlayerChoice
-
-var currShuffleHash = ''
 
 /******************************************************************************
  * inner-mode functions
@@ -193,10 +191,11 @@ function domtrackInit(x) {
     initializePlayerInput('PLAYER_INPUT_p4')
     initializePlayerInput('PLAYER_INPUT_p5')
     initializePlayerInput('PLAYER_INPUT_p6')
+    initializePlayerInput('PLAYER_INPUT_p7')
+    initializePlayerInput('PLAYER_INPUT_p8')
 
     /* overall modes; play is the default */
     showElems.push(document.getElementById("play"))
-    showElems.push(document.getElementById("shuffler"))
     showElems.push(document.getElementById("stats"))
     showElems.push(document.getElementById("istats"))
     showElems.push(document.getElementById("games"))
@@ -245,9 +244,6 @@ function domtrackInit(x) {
         }
     }
     
-
-    /* populate the ratings */
-//    playShowRatings()
 }
 
 /* Play Screen - Create a player input box */
@@ -303,15 +299,6 @@ function showLeaderboard() {
     loadAllRatingsHistoryGraph()
 }
 
-function showShuffler() {
-    hideAllBut(document.getElementById('shuffler'))
-}
-
-function showGameStats() {
-    hideAllBut(document.getElementById('istats'))    
-    loadGamesStats()    
-}
-
 function showGamesList() {
     hideAllBut(document.getElementById('games'))
     loadGamesList()
@@ -324,33 +311,6 @@ function showAdmin() {
 /******************************************************************************
  * PLAY MODE stuff
  *****************************************************************************/
- /*
-function playShowRatings() {
-
-    /* update statistics * /
-    var enameToElemStats   = []
-    enameToElemStats["p1"] = elem_p1stats
-    enameToElemStats["p2"] = elem_p2stats
-    enameToElemStats["p3"] = elem_p3stats
-    enameToElemStats["p4"] = elem_p4stats
-    enameToElemStats["p5"] = elem_p5stats
-    enameToElemStats["p6"] = elem_p6stats
-
-    for(var i in playerElems) {
-        if(playerElems[i].value) {           
-            enameToElemStats[playerElems[i].id].innerHTML = 
-                playerToRating[playerElems[i].value] + " (" + 
-                playerToMu[playerElems[i].value]     + "/"  + 
-                playerToSigma[playerElems[i].value]  + ")"
-        }
-
-        else {
-            /* user chose the initial blank entry * /
-            enameToElemStats[playerElems[i].id].innerHTML = ""
-        }
-    }
-}
-*/
 function selChange_cb(elem) {
 
     /* force other drop downs away from the name we just selected */
@@ -369,8 +329,6 @@ function selChange_cb(elem) {
         }
     }
 
-    /* populate ratings */
-//    playShowRatings()
 }
 
 function disableRecordGame() {
@@ -454,7 +412,6 @@ function recordGame(elem) {
 
     /* refresh */
     refreshPlayerDataStore()
-//    playShowRatings()
     for (i in scoreElems) {
         playerElemStats[i].innerHTML = ''
         playerElems[i].value = ''
@@ -474,56 +431,6 @@ function clearPlayers(elem)
     for(var s in scoreElems) {
         scoreElems[s].value = ''
     }   
-    
-//    playShowRatings()
-}
-
-function shuffleCards() {	
-	
-	// Gather the requested expansions to shuffle
-	var form = document.getElementById('form_shuffle')
-	var sets = ""
-	for (var i=0; i<form.length; i++) {
-		if (form[i].checked) {
-			sets += form[i].value + ","
-		}
-	}
-	sets = sets.slice(0,-1)
-			
-	// Request the shuffle
-    var resp = ajax("cgi/jsIface.py?op=shuffle&sets=" + sets)
-    processShuffleResults(resp)
-
-}
-
-function shuffleConnect() {	
-
-	// Request the shuffle
-    var resp = ajax("cgi/jsIface.py?op=shuffleConnect")
-    processShuffleResults(resp)
-}
-
-function processShuffleResults(resp) {
-
-    // Process the results    
-    var html  = '<br>'
-    var htmlKingdom = ''
-    var lines = resp.split("\n")
-    currShuffleHash = lines.splice(0,1)
-    html = 'Kingdom Hash: ' + currShuffleHash + '<br>'
-    for(var i in lines) {
-        var elements = lines[i].split(",")
-        if (elements.length > 1) {
-            var expansion = elements[0].toLowerCase().replace(/\s/g, '')
-            var card = elements[1].toLowerCase().replace(/\s/g, '').replace("'", '')
-            console.log(card)
-            html += elements[0] + ' - ' + elements[1] + '<br>'
-            htmlKingdom += '<img width="300" src=\'images/' + expansion + '/' + card + '.jpg\'><br>'
-        }
-    }
-    html += '<br><br>' + htmlKingdom
-        
-    document.getElementById("ShuffleResults").innerHTML = html
 }
 
 /******************************************************************************
@@ -793,26 +700,6 @@ function loadAllRatingsVsGamesGraph() {
 
     /* erase the "loading..." message */
     document.getElementById("AllRatingsVsGamesGraph_status").innerHTML = ""
-}
-
-/******************************************************************************
- * GAMES STATS MODE stuff
- *****************************************************************************/
-function loadGamesStats() {
-    var resp = ajax("cgi/jsIface.py?op=getGameStats")
-    var lines = resp.split("\n")
-    
-    var html = ''
-    html += '<h2>Cards Most Played</h2>'
-    
-    for(var i in lines) {
-        var elements = lines[i].split(",")
-        if (elements.length > 1) {
-            html += elements[2] + ' - ' + elements[1] + '<br>'
-        }
-    }
-        
-    document.getElementById("istats").innerHTML = html    
 }
 
 /******************************************************************************
