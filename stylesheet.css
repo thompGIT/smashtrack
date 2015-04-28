@@ -1,0 +1,175 @@
+body {
+    margin: 8px;
+    height: 100%;
+
+    /* font-family: verdana, arial, serif; */
+    font-size: x-large;
+    font-family: 'Arial', 'Helvetica', sans-serif;
+    background-color: #F5F4EB;
+}
+
+input {
+    display: inline;
+}
+
+th {
+    font-size: large;
+    text-align: left;
+}
+
+select {
+    font-size: x-large;
+}
+
+input {
+    font-size: x-large;
+}
+
+span {
+    font-size: x-large;
+}
+
+table {
+    font-size: x-large;
+}
+
+span.predict {
+    font-size: large;
+    font-weight: bold;
+}
+
+
+div.menu {
+    background-color: #5882FA;
+    font-size: large;
+    padding-left: 20px;
+    padding-top: 5px;
+    box-shadow: 10px 10px 5px #888888;
+    font-weight: bold;
+}
+
+div.playerSelectHeader {
+    color: black;
+    background-color: #5882FA;
+    border-radius: 8px; 
+    overflow: hidden;
+}
+
+div.playerSelectHeaderTitle {
+    float: left;
+	margin-left: 100;
+	width: 275px;
+	font-weight:bold;
+}
+
+div.playerSelectHeaderStats {
+    float: left;
+	width: 200px;
+	font-weight:bold;
+}
+
+div.playerSelectHeaderScore {
+    float: right;
+	width: 60px;
+	font-weight:bold;
+}
+
+div.playerSelect {
+    color: black;
+    background-color: white;
+    padding: 8px;
+    border-radius: 8px; 
+    overflow: hidden;
+}
+
+div.playerSelectTitle {
+    float: left;
+	width:  50px;
+	height: 32px;
+	margin-top: 5;
+	font-weight:bold;
+	vertical-align: center;
+}
+
+div.playerSelectCombo {
+    float: left;
+	width: 200px;
+}
+
+div.playerSelectStats {
+    float: left;
+	width:  200px;
+	height: 32px;
+	margin-left: 25;
+	margin-top: 5;
+}
+
+div.playerSelectScore {
+    float:  right;
+	height: 90%;
+}
+
+.comboPlayer {
+	width:  200px;
+	text-align: center;
+}
+
+.playerStats {
+}
+
+div.gameLogPlayerEntry {
+    background-color: #5882FA;
+    font-size: medium;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    width: 175px;
+    box-shadow: 5px 5px 5px #888888;
+}
+
+div.gameLogPlayerEntryWin {
+    background-color: #00aa00;
+    font-size: medium;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    width: 175px;
+    box-shadow: 5px 5px 5px #888888;
+}
+
+#shuffler {
+    margin: 1em;
+}
+
+#shuffler_options_wrapper {
+    width: 100%;
+}
+
+#shuffler_kingdom_list {
+    width: 220px;
+    float: left;
+}
+
+#shuffler_options_list {
+    font-size: small;
+    float: left;
+}
+
+.tbVP {
+	width:  80px;
+	height: 40px;
+	color : #747862;
+	padding:4px 8px;
+	margin-bottom:0px;
+	min:-50;
+	max:200;
+}
+
+input.menu {
+    font-size: small;
+    border: 1px solid black;
+    border-radius: 5px;
+    margin: 0px;
+}
