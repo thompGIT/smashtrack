@@ -182,7 +182,7 @@ var elem_istatsPlayerChoice
  *****************************************************************************/
 
 /* called when the page loads */
-function domtrackInit(x) {
+function xtrackInit(x) {
 
 	// Play Screen - Create the player input rows
     initializePlayerInput('PLAYER_INPUT_p1')
@@ -352,11 +352,13 @@ function recordGame(elem) {
     var scores  = []
 
     /* Load all the player names and scores */    
+    var pCount = 0
     for(var i in playerElems) {
         if (playerElems[i].value == '') { 
             p = 'none' 
         } else {
             p = playerElems[i].value
+            pCount += 1
         }
         if (scoreElems[i].value == '') {
             s = -200
@@ -369,22 +371,12 @@ function recordGame(elem) {
        
     /* build the ajax request */
     var req = 'cgi/jsIface.py?op=recordGame'
-    
-    req += '&p1='   + players[0] + "&p1_vp=" + scores[0]
-    req += '&p2='   + players[1] + "&p2_vp=" + scores[1]
-    req += '&p3='   + players[2] + "&p3_vp=" + scores[2]
-    req += '&p4='   + players[3] + "&p4_vp=" + scores[3]
-    req += '&p5='   + players[4] + "&p5_vp=" + scores[4]
-    req += '&p6='   + players[5] + "&p6_vp=" + scores[5]
-    req += '&hash=' + currShuffleHash
+    for (i in players) {
+        req += '&p' + (parseInt(i)+1) + '='   + players[i] + '&p' + (parseInt(i)+1) + '_vp=' + (players.length - i) 
+    }
+    req += '&hash=0'  
 
     /* do it! */
-    var pCount = 0
-    for (i in scores) {
-        if (scores[i] != -200) {
-            pCount += 1
-        }
-    }
     if (pCount > 1) {
         ajax(req)
     } else {
@@ -394,21 +386,7 @@ function recordGame(elem) {
     }
 
     /* message */
-    var winScore = 0
-    for (s in scores) {
-        if (parseInt(scores[s]) > winScore) {
-            winScore = parseInt(scores[s])
-        }
-    }    
-    var alertMsg = 'Win for '    
-    for (p in players) {
-        if (scores[p] == winScore) {
-            alertMsg += players[p]
-            alertMsg += ' '
-        }
-    }    
-    alertMsg += "recorded!" 
-    alert(alertMsg)
+    alert('Win for ' + players[0] + ' recorded!')
 
     /* refresh */
     refreshPlayerDataStore()
