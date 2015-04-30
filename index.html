@@ -29,7 +29,6 @@
                     <td bgcolor="#5882FA">
                         <div class=playerSelectHeader bgcolor="#5882FA">
                             <div class=playerSelectHeaderTitle>Players</div>
-                            <div class=playerSelectHeaderScore>Stk</div>
                         </div>
                     </td>
                 </tr>
@@ -39,6 +38,8 @@
                 <tr id="PLAYER_INPUT_p4"></tr>
                 <tr id="PLAYER_INPUT_p5"></tr>
                 <tr id="PLAYER_INPUT_p6"></tr>
+                <tr id="PLAYER_INPUT_p7"></tr>
+                <tr id="PLAYER_INPUT_p8"></tr>
                 <tr>
                     <td bgcolor="#5882FA">
                         <input id="Record" class="SubmitButton" type=submit value="Record"        onClick="recordGame(this)">
@@ -48,7 +49,7 @@
             </table>
         </div>
         
-        <!-- MODE: OVERALL STATS -->
+        <!-- MODE: LEADERBOARD -->
         <div id="stats" style="margin: 1em">
             <div id="LeaderBoard" style="text-align:center"></div>
             <br>
@@ -59,11 +60,7 @@
             <div id="AllRatingsHistoryGraph" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
         </div>
 
-        <!-- MODE: INDIVIDUAL STATS -->
-        <div id="istats" style="margin: 1em">
-        </div>
-
-        <!-- MODE: GAMES LIST -->
+        <!-- MODE: GAMES HISTORY -->
         <div id="games" style="margin: 1em">
         </div>
 
