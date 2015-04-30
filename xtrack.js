@@ -22,12 +22,6 @@ var TEMPLATE_PlayerInput = "\
 					onchange='selChange_cb(this)'> \
 				</select> \
 			</div> \
-			<div class=playerSelectScore> \
-				<input id=PLAYER_TITLE_vp \
-					class=tbVP \
-					type='number'> \
-				</input> \
-			</div> \
 		</div> \
 	</td>"		
 
@@ -159,10 +153,7 @@ function dateToStringMini(d) {
 /* overall */
 var showElems = []
 
-/* important play elems */
-var elem_p1,      elem_p2,      elem_p3,      elem_p4,      elem_p5,      elem_p6,      elem_p7,        elem_p8
-var elem_p1stats, elem_p2stats, elem_p3stats, elem_p4stats, elem_p5stats, elem_p6stats, elem_p7stats,   elem_p8stats
-var score_p1,     score_p2,     score_p3,     score_p4,     score_p5,     score_p6,     score_p7,       score_p8
+var numPlayers = 6
 
 var playerElems   = []
 var scoreElems    = []
@@ -184,16 +175,6 @@ var elem_istatsPlayerChoice
 /* called when the page loads */
 function xtrackInit(x) {
 
-	// Play Screen - Create the player input rows
-    initializePlayerInput('PLAYER_INPUT_p1')
-    initializePlayerInput('PLAYER_INPUT_p2')
-    initializePlayerInput('PLAYER_INPUT_p3')
-    initializePlayerInput('PLAYER_INPUT_p4')
-    initializePlayerInput('PLAYER_INPUT_p5')
-    initializePlayerInput('PLAYER_INPUT_p6')
-//    initializePlayerInput('PLAYER_INPUT_p7')
-//    initializePlayerInput('PLAYER_INPUT_p8')
-
     /* overall modes; play is the default */
     showElems.push(document.getElementById("play"))
     showElems.push(document.getElementById("stats"))
@@ -202,48 +183,30 @@ function xtrackInit(x) {
     showElems.push(document.getElementById("admin"))
     showPlay()
 
-    /* play mode */
-    elem_p1 = document.getElementById("p1")
-    elem_p2 = document.getElementById("p2")
-    elem_p3 = document.getElementById("p3")
-    elem_p4 = document.getElementById("p4")
-    elem_p5 = document.getElementById("p5")
-    elem_p6 = document.getElementById("p6")
-    playerElems = [elem_p1, elem_p2, elem_p3, elem_p4, elem_p5, elem_p6]
+	// Play Screen - Create and initialize the player input rows
+    for (i=1; i<=numPlayers; i++) {
+        initializePlayerInput('PLAYER_INPUT_p'+i)
+        playerElems.push(document.getElementById('p'+i))
+        scoreElems.push(document.getElementById('p'+i+'_vp'))
+    }
 
-    elem_p1stats = document.getElementById("p1_stats")
-    elem_p2stats = document.getElementById("p2_stats")
-    elem_p3stats = document.getElementById("p3_stats")
-    elem_p4stats = document.getElementById("p4_stats")
-    elem_p5stats = document.getElementById("p5_stats")
-    elem_p6stats = document.getElementById("p6_stats")
-    playerElemStats = [elem_p1stats, elem_p2stats, elem_p3stats, elem_p4stats, elem_p5stats, elem_p6stats]
-    
-    score_p1 = document.getElementById("p1_vp")
-    score_p2 = document.getElementById("p2_vp")
-    score_p3 = document.getElementById("p3_vp")
-    score_p4 = document.getElementById("p4_vp")
-    score_p5 = document.getElementById("p5_vp")
-    score_p6 = document.getElementById("p6_vp")
-    scoreElems = [score_p1, score_p2, score_p3, score_p4, score_p5, score_p6]
-        
-    /* individual stats mode */
-    elem_istatsPlayerChoice = document.getElementById("istatsPlayerChoice")
-    
+    // Hack to hide player inputs
+    for (i=3; i<=6; i++) {
+        document.getElementById('PLAYER_INPUT_p'+i).style.display = 'none'
+    }
+
     /* init global player vars */
     refreshPlayerDataStore()
 
     /* populate player choice drop-downs */
     playerNames.sort()
-    var elems = [elem_p1, elem_p2, elem_p3, elem_p4, elem_p5, elem_p6]
-    for(var i in elems) {
-        elems[i].value = ''
-        elems[i].innerHTML = '<option></option>'
+    for(var i in playerElems) {
+        playerElems[i].value = ''
+        playerElems[i].innerHTML = '<option></option>'
         for(var j in playerNames) {
-            elems[i].innerHTML += "<option>" + playerNames[j] + "</option>"
+            playerElems[i].innerHTML += "<option>" + playerNames[j] + "</option>"
         }
     }
-    
 }
 
 /* Play Screen - Create a player input box */
@@ -313,22 +276,14 @@ function showAdmin() {
  *****************************************************************************/
 function selChange_cb(elem) {
 
-    /* force other drop downs away from the name we just selected */
-    var elems       = [elem_p1, elem_p2, elem_p3, elem_p4, elem_p5, elem_p6]
-    var elems_stats = [elem_p1stats, elem_p2stats, elem_p3stats, elem_p4stats, elem_p5stats, elem_p6stats]
-
-    for(var i=0; i<6; ++i) {
-        if(elem != elems[i] && elem.value == elems[i].value) {
+    for(var i=0; i<numPlayers; ++i) {
+        if(elem != playerElems[i] && elem.value == playerElems[i].value) {
 	        /* this works in chrome, firefox */
-            elems[i].value = ""
+            playerElems[i].value = ""
             /* this works in kindle fire browser */
-	        elems[i].options.selectedIndex = 0
-
-            /* clear also the stats */
-            elems_stats[i].innerHTML = ""
+	        playerElems[i].options.selectedIndex = 0
         }
     }
-
 }
 
 function disableRecordGame() {
@@ -360,11 +315,10 @@ function recordGame(elem) {
             p = playerElems[i].value
             pCount += 1
         }
-        if (scoreElems[i].value == '') {
-            s = -200
-        } else {
-            s = scoreElems[i].value
-        }        
+
+        // Assume the players are listed in order of finish position
+        s = playerElems.length - i
+
         players.push(p)
         scores.push(s)
     }
@@ -372,7 +326,7 @@ function recordGame(elem) {
     /* build the ajax request */
     var req = 'cgi/jsIface.py?op=recordGame'
     for (i in players) {
-        req += '&p' + (parseInt(i)+1) + '='   + players[i] + '&p' + (parseInt(i)+1) + '_vp=' + (players.length - i) 
+        req += '&p' + (parseInt(i)+1) + '='   + players[i] + '&p' + (parseInt(i)+1) + '_vp=' + scores[i]
     }
     req += '&hash=0'  
 
@@ -387,14 +341,6 @@ function recordGame(elem) {
 
     /* message */
     alert('Win for ' + players[0] + ' recorded!')
-
-    /* refresh */
-    refreshPlayerDataStore()
-    for (i in scoreElems) {
-        playerElemStats[i].innerHTML = ''
-        playerElems[i].value = ''
-        scoreElems[i].value  = ''
-    }
 
     /* some seconds from now, re-enable */
     setTimeout("enableRecordGame();", disabledDelay)
