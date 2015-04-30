@@ -191,8 +191,8 @@ function xtrackInit(x) {
     initializePlayerInput('PLAYER_INPUT_p4')
     initializePlayerInput('PLAYER_INPUT_p5')
     initializePlayerInput('PLAYER_INPUT_p6')
-    initializePlayerInput('PLAYER_INPUT_p7')
-    initializePlayerInput('PLAYER_INPUT_p8')
+//    initializePlayerInput('PLAYER_INPUT_p7')
+//    initializePlayerInput('PLAYER_INPUT_p8')
 
     /* overall modes; play is the default */
     showElems.push(document.getElementById("play"))
