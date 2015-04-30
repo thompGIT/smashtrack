@@ -689,7 +689,6 @@ function loadGamesList() {
     var lines = resp.split("\n")
     lines.reverse()
 
-
     var html = ''
     html += '<table cellpadding=0 cellspacing=8px>\n'
     html += '<tr>\n'
@@ -743,7 +742,7 @@ function loadGamesList() {
         html += '  </td>\n'
         for (var p in players) {        
             html += '  <td>\n'
-            if (scores[p] > -100) {
+            if (players[p] != 'none') {
                 html += '    <div ' + ((scores[p]==scores[win]) ? DivWinner : DivLoser) + '><b>' + players[p] + '</b> <i>(' + ratings[p] + ')</i> <b>[' + scores[p] + ']</b></div>\n'
             }
             html += '  </td>\n'
