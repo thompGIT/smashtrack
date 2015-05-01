@@ -43,9 +43,32 @@ div.menu {
     background-color: #5882FA;
     font-size: large;
     padding-left: 20px;
-    padding-top: 5px;
+    padding-top: 10px;
     box-shadow: 10px 10px 5px #888888;
     font-weight: bold;
+    white-space: nowrap;
+    height: 35px;
+}
+
+input.menuBtn {
+	border : solid 1px #e6e6e6;
+	border-radius : 6px;
+	moz-border-radius : 6px;
+	-webkit-box-shadow : 0px 0px 2px rgba(0,0,0,1.0);
+	-moz-box-shadow : 0px 0px 2px rgba(0,0,0,1.0);
+	box-shadow : 0px 0px 2px rgba(0,0,0,1.0);
+	font-size : 16px;
+	color : #000000;
+	padding : 1px 17px;
+	background-color : #f7f7f7;
+}
+
+
+
+div.playField {
+    background-color: #5882FA;
+    height: 300px;
+    box-shadow: 10px 10px 5px #888888;
 }
 
 div.playerSelectHeader {
@@ -110,11 +133,8 @@ div.playerSelectScore {
 }
 
 .comboPlayer {
-	width:  200px;
+	width:  250px;
 	text-align: center;
-}
-
-.playerStats {
 }
 
 div.gameLogPlayerEntry {
@@ -139,24 +159,6 @@ div.gameLogPlayerEntryWin {
     box-shadow: 5px 5px 5px #888888;
 }
 
-#shuffler {
-    margin: 1em;
-}
-
-#shuffler_options_wrapper {
-    width: 100%;
-}
-
-#shuffler_kingdom_list {
-    width: 220px;
-    float: left;
-}
-
-#shuffler_options_list {
-    font-size: small;
-    float: left;
-}
-
 .tbVP {
 	width:  80px;
 	height: 40px;
@@ -172,4 +174,29 @@ input.menu {
     border: 1px solid black;
     border-radius: 5px;
     margin: 0px;
+}
+
+input.playBtnLeft  {
+	border : solid 5px #ffffff;
+	border-radius : 20px 0px 0px 20px ;
+	moz-border-radius : 20px 0px 0px 20px ;
+	-webkit-box-shadow : 0px 14px 21px rgba(0,0,0,1.0);
+	-moz-box-shadow : 0px 14px 21px rgba(0,0,0,1.0);
+	box-shadow : 0px 14px 21px rgba(0,0,0,1.0);
+	font-size : 20px;
+	color : #ffffff;
+	padding : 2px 20px;
+	background-color : #0a66c9;
+}
+input.playBtnRight  {
+	border : solid 5px #ffffff;
+	border-radius : 0px 20px 20px 0px ;
+	moz-border-radius : 0px 20px 20px 0px ;
+	-webkit-box-shadow : 0px 14px 21px rgba(0,0,0,1.0);
+	-moz-box-shadow : 0px 14px 21px rgba(0,0,0,1.0);
+	box-shadow : 0px 14px 21px rgba(0,0,0,1.0);
+	font-size : 20px;
+	color : #ffffff;
+	padding : 2px 20px;
+	background-color : #0a66c9;
 }

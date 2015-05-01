@@ -15,14 +15,14 @@
         <!-- MODE SELECTION -->
         <div class="menu">
             SmashTrack: 
-            <input type=submit class="menu" onclick="showPlay()"        value="Play" />
-            <input type=submit class="menu" onclick="showLeaderboard()" value="Leaderboard" />
-            <input type=submit class="menu" onclick="showGamesList()"   value="Games History" />
-            <input type=submit class="menu" onclick="showAdmin()"       value="Admin" />
+            <input type=submit class="menuBtn" onclick="showPlay()"        value="Play" />
+            <input type=submit class="menuBtn" onclick="showLeaderboard()" value="Leaderboard" />
+            <input type=submit class="menuBtn" onclick="showGamesList()"   value="Games History" />
+            <input type=submit class="menuBtn" onclick="showAdmin()"       value="Admin" />
         </div>
 
         <!-- MODE: PLAY -->
-        <div id="play">
+        <div id="play" class="playField">
             <input type=hidden name="op" value="record">
             <table width="100%" cellpadding=12 cellspacing=0>
                 <tr>
@@ -32,7 +32,7 @@
                         </div>
                     </td>
                 </tr>
-                <tr id="PLAYER_INPUT_p1"></tr>
+                <tr id="PLAYER_INPUT_p1"></tr> 
                 <tr id="PLAYER_INPUT_p2"></tr>
                 <tr id="PLAYER_INPUT_p3"></tr>
                 <tr id="PLAYER_INPUT_p4"></tr>
@@ -42,8 +42,8 @@
                 <tr id="PLAYER_INPUT_p8"></tr>
                 <tr>
                     <td bgcolor="#5882FA">
-                        <input id="Record" class="SubmitButton" type=submit value="Record"        onClick="recordGame(this)">
-                        <input name=""     class="SubmitButton" type=submit value="clear &#x21bb" onClick="clearPlayers(this)">
+                        <input id="Record" class="playBtnLeft" type=submit value="Record"        onClick="recordGame(this)">
+                        <input name=""     class="playBtnRight" type=submit value="clear &#x21bb" onClick="clearPlayers(this)">
                     </td>
                 </tr>
             </table>
