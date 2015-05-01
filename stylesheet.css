@@ -187,6 +187,7 @@ input.playBtnLeft  {
 	color : #ffffff;
 	padding : 2px 20px;
 	background-color : #0a66c9;
+	width: 125px;
 }
 input.playBtnRight  {
 	border : solid 5px #ffffff;
@@ -199,4 +200,5 @@ input.playBtnRight  {
 	color : #ffffff;
 	padding : 2px 20px;
 	background-color : #0a66c9;
+	width: 125px;
 }
