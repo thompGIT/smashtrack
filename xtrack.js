@@ -639,12 +639,14 @@ function loadGamesList() {
     html += '<table cellpadding=0 cellspacing=8px>\n'
     html += '<tr>\n'
     html += '  <th style="text-align:center">Date</th>\n'
-    html += '  <th style="text-align:center">Player 1</th>\n'
-    html += '  <th style="text-align:center">Player 2</th>\n'
+    html += '  <th style="text-align:center">Winner</th>\n'
+    html += '  <th style="text-align:center">Loser</th>\n'
+/*    
     html += '  <th style="text-align:center">Player 3</th>\n'
     html += '  <th style="text-align:center">Player 4</th>\n'
     html += '  <th style="text-align:center">Player 5</th>\n'
     html += '  <th style="text-align:center">Player 6</th>\n'
+*/
     html += '</tr>\n'
 
     for(var i in lines) {
@@ -689,12 +691,12 @@ function loadGamesList() {
         for (var p in players) {        
             html += '  <td>\n'
             if (players[p] != 'none') {
-                html += '    <div ' + ((scores[p]==scores[win]) ? DivWinner : DivLoser) + '><b>' + players[p] + '</b> <i>(' + ratings[p] + ')</i> <b>[' + scores[p] + ']</b></div>\n'
+                html += '    <div ' + ((scores[p]==scores[win]) ? DivWinner : DivLoser) + '><b>' + players[p] + '</b> <i>(' + ratings[p] + ')</i></div>\n'
             }
             html += '  </td>\n'
         }
         html += '  <td>\n'
-        html += '    <input type=submit value="Delete" onClick="deleteGame_cb(this, ' + t + ')">\n'
+        html += '    <input type=submit class=menuBtn value="Delete" onClick="deleteGame_cb(this, ' + t + ')">\n'
         html += '  </td>\n'
         html += '</tr>\n'
     }
