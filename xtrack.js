@@ -579,7 +579,6 @@ function loadGamesList() {
         html += '<tr>\n'
         html += '  <td width=250px align=center>\n'
         html += dateToString(date) + "\n"
-        // html += longAgoStrStealth(date.getTime() / 1000) + "\n"
         html += '  </td>\n'
         for (var p in players) {        
             html += '  <td>\n'
