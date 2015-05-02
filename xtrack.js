@@ -38,112 +38,10 @@ function ajax(url) {
     return resp
 }
 
-// stackoverflow, thx Shef!
-function zfill(num, len) {
-    return (Array(len).join("0") + num).slice(-len)
-}
-
-function longAgoStr(epoch) {
-    var answer = ''
-    var delta = (new Date().getTime() / 1000) - epoch
-
-    if (delta < 60) {
-        answer = delta.toFixed(1) + ' seconds'
-    }
-    else if (delta < 3600) {
-        answer = (delta / 60).toFixed(1) + ' minutes'
-    }
-    else if (delta < 86400) {
-        answer = (delta / 3600).toFixed(1) + ' hours'
-    }
-    else if (delta < 2592000) {
-        answer = (delta / 86400).toFixed(0) + ' days'
-    }
-    else if (delta < 31536000) {
-        answer = (delta / 2592000).toFixed(0) + ' months'
-    }
-    else {
-        answer = (delta / 31536000.0).toFixed(0) + ' years'
-    }
-
-    return answer
-}
-
-function longAgoStrStealth(epoch) {
-    var answer = ''
-    var delta = (new Date().getTime() / 1000) - epoch
-    var wDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
-
-    var dateNow = new Date()
-    var dateThen = new Date()
-    dateThen.setTime(epoch*1000)
-
-    /* if within the last 60 seconds, display "X seconds ago" */
-    if (delta < 60) {
-        answer = delta.toFixed(1) + ' seconds ago'
-    }
-    /* if within the last 10 minutes, display "X minutes ago" */
-    else if (delta < 10*60) {
-        answer = (delta / 60).toFixed(1) + ' minutes ago'
-    }
-    /* if within the last day, just say "today" */
-    else if (delta < 24*60*60) {
-        if(dateNow.getDay() != dateThen.getDay()) {
-            answer = 'yesterday'
-        }
-        else {
-            answer = 'today'
-        }
-    }
-    /* if within a week */
-    else if (delta < 7*24*60*60) {
-
-        if(dateThen.getDay() < dateNow.getDay()) {
-            answer = 'this ' + wDays[dateThen.getDay()]
-        }
-        else {
-            answer = 'last ' + wDays[dateThen.getDay()]; 
-        }
-    }
-    /* print the date and the days ago string */
-    else {
-        answer = dateToStringMini(dateThen)
-    }
-
-    return answer
-}
-
-function dateToString(d) {
-    var wDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
-    var hours = d.getHours()
-
-    var amPm = 'AM'
-
-    if(hours > 12) {
-        amPm = 'PM'
-        hours -= 12
-    } 
-
-    return wDays[d.getDay()] + ' ' + months[d.getMonth()] + ' ' + d.getDate() + ', ' + (1900+d.getYear()) +
-        ' ' + hours + ':' + zfill(d.getMinutes(), 2) + amPm
-}
-
-function dateToStringMini(d) {
-    var wDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-    var months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
-
-    var hours = d.getHours()
-
-    var amPm = 'AM'
-
-    if(hours > 12) {
-        amPm = 'PM'
-        hours -= 12
-    } 
-
-    return wDays[d.getDay()] + ' ' + months[d.getMonth()] + ' ' + d.getDate() + ', ' + (1900+d.getYear())
+function dateToString(date) {
+    var dateString = date.toLocaleDateString()
+    var timeString = date.toLocaleTimeString()
+    return timeString + ' ' + dateString
 }
 
 /******************************************************************************
@@ -641,12 +539,6 @@ function loadGamesList() {
     html += '  <th style="text-align:center">Date</th>\n'
     html += '  <th style="text-align:center">Winner</th>\n'
     html += '  <th style="text-align:center">Loser</th>\n'
-/*    
-    html += '  <th style="text-align:center">Player 3</th>\n'
-    html += '  <th style="text-align:center">Player 4</th>\n'
-    html += '  <th style="text-align:center">Player 5</th>\n'
-    html += '  <th style="text-align:center">Player 6</th>\n'
-*/
     html += '</tr>\n'
 
     for(var i in lines) {
@@ -686,7 +578,8 @@ function loadGamesList() {
 
         html += '<tr>\n'
         html += '  <td width=250px align=center>\n'
-        html += longAgoStrStealth(date.getTime() / 1000) + "\n"
+        html += dateToString(date) + "\n"
+        // html += longAgoStrStealth(date.getTime() / 1000) + "\n"
         html += '  </td>\n'
         for (var p in players) {        
             html += '  <td>\n'
