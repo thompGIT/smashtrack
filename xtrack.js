@@ -39,10 +39,6 @@ function ajax(url) {
 }
 
 function dateToString(date) {
-    console.log(date)
-    var dateString = date.toLocaleDateString()
-    var timeString = date.toLocaleTimeString()
-    // return timeString + ' ' + dateString
     return date.toUTCString()
 }
 
