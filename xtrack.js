@@ -39,14 +39,19 @@ function ajax(url) {
 }
 
 function dateToString(date) {
+    console.log(date)
     var dateString = date.toLocaleDateString()
     var timeString = date.toLocaleTimeString()
-    return timeString + ' ' + dateString
+    // return timeString + ' ' + dateString
+    return date.toUTCString()
 }
 
 /******************************************************************************
  * global vars
  *****************************************************************************/
+
+/* Hack to display proper time in javascript. Sucks, but it works. */
+var TIMEHACK = (-1 * 1000 * 60 * 60 * 9)
 
 /* overall */
 var showElems = []
@@ -338,7 +343,7 @@ function loadAllRatingsHistoryGraph() {
 
             /* append this one rating sample */
             /* recall that the 'datetime' type of xAxis in highcharts expects milliseconds */
-            playerToObject[p]['data'].push([t*1000, r])
+            playerToObject[p]['data'].push([(t*1000)+TIMEHACK, r])
         }
     }
 
@@ -566,7 +571,7 @@ function loadGamesList() {
         var p6   = gameData[16]
         var p6_s = parseInt(gameData[17])
         var p6_r = parseFloat(gameData[18])        
-        date.setTime(t*1000)
+        date.setTime((t*1000)+TIMEHACK)
         
         var players = [p1, p2, p3, p4, p5, p6]
         var ratings = [p1_r, p2_r, p3_r, p4_r, p5_r, p6_r]
