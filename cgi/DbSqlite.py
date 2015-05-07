@@ -12,11 +12,8 @@ from trueskill import Rating, TrueSkill
 
 dbFile      = 'xtrack.db'
 
-BASE_RATING   =   0.0
-
-SIGMA_DEGRADE_RATE_PER_HOUR = 0.1 / 24.0    # Rate of sigma degrade (or loss of confidense in rating)
-
 # TrueSkill environment variables
+BASE_RATING   =   0.0
 BASE_MU       =  25.0
 BASE_SIGMA    = BASE_MU / 3.0
 BASE_TAU      = 0.0833334           # Dynamic factor; Speed at which rankings vary (Isotropic uses SIGMA/100)
@@ -162,17 +159,6 @@ class DbSqlite():
             )
         self.conn.commit()
            
-    # BROKEN!!
-    # adjust a sigma value for time based degradation
-    def degradeSigma(self, t, s):
-        currentTime   = time.mktime(time.gmtime())
-        if (t > currentTime):
-            t = currentTime
-        sigma = s + (((currentTime - t) / (60 * 60)) * SIGMA_DEGRADE_RATE_PER_HOUR)
-        if (sigma > BASE_SIGMA):
-            sigma = BASE_SIGMA
-        return sigma
-
     #--------------------------------------------------------------------------
     # game related
     #--------------------------------------------------------------------------
