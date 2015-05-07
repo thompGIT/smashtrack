@@ -10,8 +10,7 @@ import os
 import trueskill
 from trueskill import Rating, TrueSkill
 
-dbFile      = 'domtrack.db'
-cardsDbFile = 'cards.db'
+dbFile      = 'xtrack.db'
 
 BASE_RATING   =   0.0
 
@@ -20,11 +19,8 @@ SIGMA_DEGRADE_RATE_PER_HOUR = 0.1 / 24.0    # Rate of sigma degrade (or loss of 
 # TrueSkill environment variables
 BASE_MU       =  25.0
 BASE_SIGMA    = BASE_MU / 3.0
-#BASE_TAU      = BASE_SIGMA / 100.0  # Dynamic factor; Speed at which rankings vary (Isotropic uses SIGMA/100)
 BASE_TAU      = 0.0833334           # Dynamic factor; Speed at which rankings vary (Isotropic uses SIGMA/100)
-#BASE_BETA     = BASE_MU             # How skills-based is the game (Isotripic uses 25)
 BASE_BETA     = 4.1666667           # How skills-based is the game (Isotripic uses 25)
-#BASE_DRAWPROB = 0.05                # Percentage of draw matches
 BASE_DRAWPROB = 0.1                 # Percentage of draw matches
 
 class DbSqlite():
@@ -36,29 +32,23 @@ class DbSqlite():
             ['time',     'REAL PRIMARY KEY'],  # Timestamp in epoch seconds
             ['P1',       'TEXT'],    # Player 1
             ['P1Rating', 'REAL'],    # Player 1 Rating - Global
-            ['P1SRating','REAL'],    # Player 1 Rating - Season
             ['P1Score',  'REAL'],    # Player 1 Score
             ['P2',       'TEXT'],    # Player 2
             ['P2Rating', 'REAL'],    # Player 2 Rating - Global
-            ['P2SRating','REAL'],    # Player 2 Rating - Season
             ['P2Score',  'REAL'],    # Player 2 Score
             ['P3',       'TEXT'],    # Player 3
             ['P3Rating', 'REAL'],    # Player 3 Rating - Global
-            ['P3SRating','REAL'],    # Player 3 Rating - Season
             ['P3Score',  'REAL'],    # Player 3 Score
             ['P4',       'TEXT'],    # Player 4
             ['P4Rating', 'REAL'],    # Player 4 Rating - Global
-            ['P4SRating','REAL'],    # Player 4 Rating - Season
             ['P4Score',  'REAL'],    # Player 4 Score
             ['P5',       'TEXT'],    # Player 5
             ['P5Rating', 'REAL'],    # Player 5 Rating - Global
-            ['P5SRating','REAL'],    # Player 5 Rating - Season
             ['P5Score',  'REAL'],    # Player 5 Score
             ['P6',       'TEXT'],    # Player 6
             ['P6Rating', 'REAL'],    # Player 6 Rating - Global
-            ['P6SRating','REAL'],    # Player 6 Rating - Season
             ['P6Score',  'REAL'],    # Player 6 Score
-            ['hash',     'TEXT']]    # Kingdom hash
+            ['hash',     'TEXT']]    # Game hash
     SCHEMA_PLAYERS = [
             ['name',  'TEXT PRIMARY KEY'],  # Player Name
             ['rating','REAL'],              # Rating
@@ -124,7 +114,6 @@ class DbSqlite():
     def getPlayerSigma(self, name):
         self.c.execute('SELECT sigma from players WHERE name=?', (name,))
         sigma = self.c.fetchone()[0]
-        #sigma = self.degradeSigma(self.getPlayerT(name), sigma)        # Broken
         return sigma
 
     # get the player's T (last time played)
@@ -172,7 +161,8 @@ class DbSqlite():
                 (listStats[0], listStats[1], listStats[2], listStats[3], name)
             )
         self.conn.commit()
-            
+           
+    # BROKEN!!
     # adjust a sigma value for time based degradation
     def degradeSigma(self, t, s):
         currentTime   = time.mktime(time.gmtime())
@@ -265,11 +255,6 @@ class DbSqlite():
         # Rate the game using ONLY ONE of the available scoring techniques
         self.rateGameTrueSkill1v1(results)     # TrueSkill - 1v1 Sub-Games 
                 
-        # Fetch the most recent shuffled kingdom hash if the previous hash is not passed in
-        if (gameHash == ''):
-            self.c.execute('SELECT value FROM misc WHERE setting="lasthash"')
-            gameHash = self.c.fetchall()[0][0]
-                
         # Create the query
         sql  = 'INSERT OR REPLACE into games values(?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?, ?,?,?,?,?)'
         timestamp = time.mktime(time.gmtime())
@@ -340,152 +325,7 @@ class DbSqlite():
         # Re-process the stored games
         for g in gamesToScore:
             self.recordGame(g[1],g[2],g[3],g[0])        
-            
           
-    #--------------------------------------------------------------------------
-    # game stats related
-    #--------------------------------------------------------------------------
-    def getCardStats(self):
-        
-        # Grab the raw cards from the database
-        sql  = 'SELECT id,Title FROM cards ORDER BY id'        		
-        self.cards_c.execute(sql)
-        cardStats = []
-        cardStats.append([0,'',0])
-        for x in self.cards_c.fetchall():
-            cardStats.append([ x[0], x[1], 0 ])
-                
-        # Get games list
-        games = self.getGames()
-        for g in games:
-            cards = self.hashToCards(g[19])
-            for c in cards:
-                index = c[3]
-                cardStats[c[3]][2] += 1
-                
-        cardStats = sorted(cardStats, key=lambda card: card[2], reverse=True)
-               
-        return cardStats
-                                          
-    #--------------------------------------------------------------------------
-    # shuffler related
-    #--------------------------------------------------------------------------
-    
-    # Create a set of kingdom cards from a hash
-    def hashToCards(self, cHash):
-        cards = []
-        for i in range(0, len(cHash) / 2):
-            cardId = int(cHash[i*2]+cHash[i*2+1],16)
-            self.cards_c.execute('SELECT Expansion,Title,Cost_P,id FROM cards WHERE id=' + str(cardId))
-            for x in self.cards_c.fetchall():
-                cards.append([ x[0], x[1], x[2], x[3] ])
-        return cards
-    
-    # return the most recently shuffled kingdom
-    def getLastShuffle(self):
-        self.c.execute('SELECT value FROM misc WHERE setting=\'lasthash\'')
-        kingdomHash = self.c.fetchall()[0][0]
-        cards = self.hashToCards(kingdomHash)
-        return (cards,kingdomHash)
-            
-    # shuffle card, return a kingdom
-    def shuffleCards(self, setsString):
-		
-        # Tokenize the sets string
-        sets = setsString.split(',')		
-        
-        # Disallowed cards
-        excludedCards = ['Platinum','Colony',               # Prosperity
-                         'Potion',                          # Alchemy
-                         'Spoils','Madman','Mercenary',     # Dark Ages
-                         'Trusty Steed','Princess',         # Cornucopia (Prizes)
-                         'Followers','Diadem','Bag of Gold']
-		
-        # Grab the raw cards from the database
-        sql  = 'SELECT Expansion,Title,Cost_P,id FROM cards WHERE'
-        sql += ' (Ru = 0) and '                               # Exclude individual Ruins
-        sql += ' (Sh = 0) and '                               # Exclude individual Shelters
-        sql += ' (Kn = 0 or Title = \'Sir Martin\') '         # Exclude individual Knights        
-        for c in excludedCards:                               # Exclude special cards
-            sql += ' and Title != \'' + c + '\''        
-        sql += ' and ('
-        for s in sets:                                        # Only pull from requested expansions
-            sql += ' Expansion = \'' + s + '\' or'
-        sql = sql[:-2]
-        sql += ') ORDER BY RANDOM() LIMIT 10'        		
-        self.cards_c.execute(sql)
-		
-        # Clean up the results
-        cards = []
-        for x in self.cards_c.fetchall():
-            cards.append([ x[0], x[1], x[2], x[3] ])
-            	    
-        # Add Colonies and Platnum?
-        if cards[0][0] == 'Prosperity':
-            cards.append(['Prosperity','Colony',0,116])
-            cards.append(['Prosperity','Platinum',0,115])
-                
-        # Add Shelters?
-        if cards[0][0] == 'Dark Ages':
-            cards.append(['Dark Ages','Shelters*',0,169])
-		
-        # Add Potions?
-        for card in cards:
-            if card[2] == 1:
-                cards.append(['Alchemy','Potion',0,87])
-                break
-		
-        # Add Prizes?
-        for card in cards:
-            if card[1] == 'Tournament':
-                cards.append(['Cornucopia','Prizes*',0,117])
-                break
-                
-        # Add Knights?
-        for card in cards:
-            if card[1] == 'Sir Martin':
-                cards.append(['Dark Ages','Knights*',0,191])
-                break
-		
-        # Add Spoils?
-        for card in cards:
-            if card[1] == 'Marauder' or card[1] == 'Bandit Camp' or card[1] == 'Pillage':
-                cards.append(['Dark Ages','Spoils',0,167])
-                break
-                
-        # Add Madman?
-        for card in cards:
-            if card[1] == 'Hermit':
-                cards.append(['Dark Ages','Madman',0,162])
-                break
-		
-        # Add Mercenary?
-        for card in cards:
-            if card[1] == 'Urchin':
-                cards.append(['Dark Ages','Mercenary',0,181])
-                break
-                
-        # Add Ruins?
-        for card in cards:
-            if card[1] == 'Marauder' or card[1] == 'Cultist' or card[1] == 'Death Cart':
-                cards.append(['Dark Ages','Ruins*',0,161])
-                break
-                
-        # Sort the results to group by expansion
-        cards.sort()
-		        		          
-        # Calculate the kingdom hash value
-        # - The hash is a series of ascii hex bytes representing cards in the kingdom
-        kingdomHash = ''
-        for card in cards:
-            kingdomHash += '{:02x}'.format(int(card[3]))
-            
-        # Store the kingdom 
-        self.c.execute('INSERT OR REPLACE INTO misc VALUES (?,?)', ('lasthash',kingdomHash,));
-        self.conn.commit();
-                        		        		          
-        return (cards,kingdomHash)
-		
     #--------------------------------------------------------------------------
     # DbSqlite::Init
     #--------------------------------------------------------------------------
@@ -499,10 +339,6 @@ class DbSqlite():
         self.conn = sqlite3.connect(dbFile)
         self.c = self.conn.cursor()
         
-        # Connect to cards database
-        self.cards_conn = sqlite3.connect(cardsDbFile)
-        self.cards_c = self.cards_conn.cursor()
-
         # If players / games database did not already exist, create it from scratch
         if ( createDB ):
             print '\tInitializing new database...'

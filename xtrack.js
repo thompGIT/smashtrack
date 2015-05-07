@@ -1,7 +1,7 @@
 /******************************************************************************
  * debug
  *****************************************************************************/
-var g_DEBUG = 1
+var g_DEBUG = 0
 
 function debug(msg) {
     if(g_DEBUG) {
@@ -38,6 +38,10 @@ function ajax(url) {
     return resp
 }
 
+/* Hack to display proper time in javascript. Sucks, but it works. */
+var TIMEHACK = (-1 * 1000 * 60 * 60 * 9)
+
+/* Create a string from a Date object */
 function dateToString(date) {
     return date.toUTCString()
 }
@@ -45,9 +49,6 @@ function dateToString(date) {
 /******************************************************************************
  * global vars
  *****************************************************************************/
-
-/* Hack to display proper time in javascript. Sucks, but it works. */
-var TIMEHACK = (-1 * 1000 * 60 * 60 * 9)
 
 /* overall */
 var showElems = []
@@ -77,7 +78,6 @@ function xtrackInit(x) {
     /* overall modes; play is the default */
     showElems.push(document.getElementById("play"))
     showElems.push(document.getElementById("stats"))
-    showElems.push(document.getElementById("istats"))
     showElems.push(document.getElementById("games"))
     showElems.push(document.getElementById("admin"))
     showPlay()

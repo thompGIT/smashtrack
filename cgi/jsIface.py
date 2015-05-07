@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 #
-# this is the interface by which the JavaScript interacts with the "back-end"
+# this is the interface by which the JavaScript interacts with the back-end
 # (database, persistent storage) of the rest of the system
 #
 # the JS makes get/post requests to this CGI, and this prints data (initially
@@ -73,11 +73,6 @@ if op == 'getstats':
         [rating, mu, sigma, t] = db.getPlayerStats(player)
         print "%.3f,%.3f,%.3f,%d" % (rating, mu, sigma, t)
 
-if op == 'getGameStats':
-    cardStats = db.getCardStats()
-    for c in cardStats:
-        print "%s,%s,%s" % (c[0],c[1],c[2])
-
 if op == 'getGames':
     games = db.getGames()
     for g in games:
@@ -90,19 +85,6 @@ if op == 'getGames':
                              g[13], g[14], g[15],
                              g[16], g[17], g[18])
 
-if op == 'shuffle':
-	sets = form['sets'].value
-	cards,kingdomHash = db.shuffleCards(sets)
-	print kingdomHash
-	for c in cards:
-	    print "%s,%s" % (c[0],c[1])
-	    
-if op == 'shuffleConnect':
-	cards,kingdomHash = db.getLastShuffle()
-	print kingdomHash
-	for c in cards:
-	    print "%s,%s" % (c[0],c[1])
-	   
 if op == 'recalculateScores':
     db.recalculateScores()
 	
