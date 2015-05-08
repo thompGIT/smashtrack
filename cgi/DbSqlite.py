@@ -224,6 +224,14 @@ class DbSqlite():
             results = filter(lambda a: a[1] != 'none', results_raw)
             results.sort(reverse=True)
             print results
+
+    # retrieve record of a single player versus a single opponent
+    def getPvPRecord(self, p1, p2):
+        self.c.execute('SELECT COUNT(*) from games WHERE p1=? and p2=?', (p1, p2))
+        wins = self.c.fetchone()[0]
+        self.c.execute('SELECT COUNT(*) from games WHERE p1=? and p2=?', (p2, p1))
+        losses = self.c.fetchone()[0]
+        return (wins, losses)
             
     # delete a game
     def deleteGame(self, t):
