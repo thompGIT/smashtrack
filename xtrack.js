@@ -185,17 +185,7 @@ function selChange_cb(elem) {
     }
 }
 
-function disableRecordGame() {
-    document.getElementById("Record").disabled = 1
-}
-
-function enableRecordGame() {
-    document.getElementById("Record").disabled = 0
-}
-
 function recordGame(elem) {
-
-    disableRecordGame()
 
     /* milliseconds before next game records */
     var disabledDelay = 5*1000
@@ -234,15 +224,12 @@ function recordGame(elem) {
         ajax(req)
     } else {
         alert('At least 2 players required!')
-        setTimeout("enableRecordGame();", 0)
         return
     }
 
     /* message */
     alert('Win for ' + players[0] + ' recorded!')
-
-    /* some seconds from now, re-enable */
-    setTimeout("enableRecordGame();", disabledDelay)
+    location.reload()
 }
 
 /* Clear all active players and scores. */
